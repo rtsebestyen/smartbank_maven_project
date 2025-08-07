@@ -12,7 +12,7 @@ public class Account
 {
    private final Long id;
 
-   private final Long ownerId;
+   private final Long personId;
 
    private final AccountType type;
 
@@ -20,10 +20,10 @@ public class Account
 
    private BigDecimal balance;
 
-   public Account( Long ownerId, AccountType type )
+   public Account( Long personId, AccountType type )
    {
       this.id = IDService.generate();
-      this.ownerId = ownerId;
+      this.personId = personId;
       this.type = type;
       this.balance = BigDecimal.ZERO;
    }
@@ -32,27 +32,26 @@ public class Account
    public void deposit( BigDecimal amount )
    {
       if ( amount.signum() <= 0 )
+      {
          throw new IllegalArgumentException( "Amount must be positive" );
+      }
       this.balance = this.balance.add( amount );
-      transactions.add( new Transaction( TransactionType.DEPOSIT, amount ) );
+      this.transactions.add( new Transaction( TransactionType.DEPOSIT, amount ) );
    }
 
 
    public void withdraw( BigDecimal amount )
    {
       if ( amount.signum() <= 0 )
+      {
          throw new IllegalArgumentException( "Amount must be positive" );
+      }
       if ( this.balance.compareTo( amount ) < 0 )
+      {
          throw new IllegalStateException( "Insufficient funds" );
+      }
       this.balance = this.balance.subtract( amount );
-      transactions.add( new Transaction( TransactionType.WITHDRAW, amount ) );
-   }
-
-
-   public void applyInterest( double rate )
-   {
-      BigDecimal interest = this.balance.multiply( BigDecimal.valueOf( rate ) );
-      deposit( interest );
+      this.transactions.add( new Transaction( TransactionType.WITHDRAW, amount ) );
    }
 
 
@@ -74,9 +73,9 @@ public class Account
    }
 
 
-   public Long getOwnerId()
+   public Long gePersonId()
    {
-      return ownerId;
+      return personId;
    }
 
 

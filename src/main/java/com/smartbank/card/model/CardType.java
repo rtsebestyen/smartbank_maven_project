@@ -1,4 +1,4 @@
-package com.smartbank.card;
+package com.smartbank.card.model;
 
 public enum CardType
 {

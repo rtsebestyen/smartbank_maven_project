@@ -25,12 +25,12 @@ public class Person
       Preconditions.checkNotNull( lastName, "Last name cannot be null" );
       Preconditions.checkArgument( !lastName.isBlank(), "Last name cannot be blank" );
 
-      //      Preconditions.checkNotNull( birthDate, "Birth date cannot be null" );
-      //      Preconditions.checkArgument( !birthDate.isBlank(), "Birth date cannot be blank" );
-      //      final LocalDate birthLocalDate = LocalDate.parse( birthDate );
-      //      Preconditions.checkArgument( calculateAge( birthLocalDate ) >= 18, "Must be at least 18 years old" );
+      Preconditions.checkNotNull( birthDate, "Birth date cannot be null" );
+      Preconditions.checkArgument( !birthDate.isBlank(), "Birth date cannot be blank" );
+      final LocalDate birthLocalDate = LocalDate.parse( birthDate );
+      Preconditions.checkArgument( calculateAge( birthLocalDate ) >= 18, "Must be at least 18 years old" );
 
-      return new Person( firstName, lastName, null );
+      return new Person( firstName, lastName, birthLocalDate );
    }
 
 

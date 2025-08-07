@@ -10,10 +10,4 @@ public class IDService
       return ++lastGenerated;
    }
 
-
-   public static Long fromString( String id )
-   {
-      return Long.parseLong( id );
-   }
-
 }

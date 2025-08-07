@@ -9,12 +9,13 @@ public class PersonModule implements ModuleInterface
 
    private final PersonService personService;
 
-   private final PersonRestController personRestController;
+   private final PersonRestInterface personRestInterface;
 
    public PersonModule( )
    {
       this.personService = new PersonService();
-      this.personRestController = new PersonRestController( this.personService );
+      final PersonRestController personRestController = new PersonRestController( this.personService );
+      this.personRestInterface = new PersonRestInterface( personRestController );
    }
 
 
@@ -27,6 +28,6 @@ public class PersonModule implements ModuleInterface
    @Override
    public void initializeModule( final Javalin javalin )
    {
-      this.personRestController.startController( javalin );
+      this.personRestInterface.startController( javalin );
    }
 }

@@ -8,7 +8,6 @@ import com.smartbank.account.model.Account;
 import com.smartbank.account.model.AccountType;
 import com.smartbank.person.Person;
 import com.smartbank.person.PersonService;
-import com.smartbank.utility.IDService;
 
 public class AccountService
 {
@@ -16,36 +15,36 @@ public class AccountService
 
    private final PersonService personService;
 
-   public AccountService( AccountRepository accountRepository, PersonService personService )
+   public AccountService( final AccountRepository accountRepository, final PersonService personService )
    {
       this.accountRepository = accountRepository;
       this.personService = personService;
    }
 
 
-   public Account createNewAccount( String ownerId, String type )
+   public Account createNewAccount( final Long personId, final AccountType accountType )
    {
-      Person person = this.personService.findById( Long.parseLong( ownerId ) );
+      final Person person = this.personService.findById( personId );
       if ( person == null )
       {
          return null;
       }
-      Account account = new Account( IDService.fromString( ownerId ), AccountType.valueOf( type ) );
-      accountRepository.save( account );
+      final Account account = new Account( personId, accountType );
+      this.accountRepository.save( account );
       return account;
    }
 
 
-   public void deposit( String accountId, BigDecimal amount )
+   public void deposit( final Long accountId, final BigDecimal amount )
    {
-      Account account = accountRepository.findById( accountId );
+      final Account account = this.accountRepository.findById( accountId );
       account.deposit( amount );
    }
 
 
-   public void withdraw( String accountId, BigDecimal amount ) throws InsufficientFundsException
+   public void withdraw( final Long accountId, final BigDecimal amount ) throws InsufficientFundsException
    {
-      Account account = accountRepository.findById( accountId );
+      final Account account = this.accountRepository.findById( accountId );
       try
       {
          account.withdraw( amount );
@@ -57,22 +56,10 @@ public class AccountService
    }
 
 
-   public void applyInterestToSavings( double rate )
+   public Long balance( final Long accountId )
    {
-      for ( Account acc : accountRepository.findAll() )
-      {
-         if ( acc.getType() == AccountType.SAVINGS )
-         {
-            acc.applyInterest( rate );
-         }
-      }
-   }
-
-
-   public List<Account> findRichAccounts( BigDecimal threshold )
-   {
-      return accountRepository.findAll().stream().filter( acc -> acc.getBalance().compareTo( threshold ) > 0 )
-            .sorted( ( a, b ) -> b.getBalance().compareTo( a.getBalance() ) ).toList();
+      final Account account = this.accountRepository.findById( accountId );
+      return account.getBalance().longValue();
    }
 
 
@@ -82,8 +69,8 @@ public class AccountService
    }
 
 
-   public Account findById( String id )
+   public Account findById( final Long accountId )
    {
-      return this.accountRepository.findById( id );
+      return this.accountRepository.findById( accountId );
    }
 }

@@ -1,6 +1,10 @@
 package com.smartbank.javalin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
 
 public final class JavalinApp
 {
@@ -16,7 +20,13 @@ public final class JavalinApp
    {
       if ( javalin == null )
       {
-         javalin = Javalin.create().start( 7070 );
+         ObjectMapper objectMapper = new ObjectMapper();
+         objectMapper.registerModule( new JavaTimeModule() );
+
+         javalin = Javalin.create( config ->
+         {
+            config.jsonMapper( new JavalinJackson( objectMapper ) );
+         } ).start( 7070 );
          javalin.get( "/", ctx -> ctx.result( "Hello from Javalin!" ) );
       }
       return javalin;

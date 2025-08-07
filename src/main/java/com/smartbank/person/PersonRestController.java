@@ -2,11 +2,9 @@ package com.smartbank.person;
 
 import java.util.List;
 
-import com.smartbank.commoninterface.RestControllerInterface;
+import io.javalin.http.Context;
 
-import io.javalin.Javalin;
-
-public class PersonRestController implements RestControllerInterface
+public class PersonRestController
 {
    private final PersonService personService;
 
@@ -16,39 +14,37 @@ public class PersonRestController implements RestControllerInterface
    }
 
 
-   @Override
-   public void startController( final Javalin javalin )
+   public void createPerson( Context ctx )
    {
-      javalin.get( "/persons", ctx ->
+      String firstName = ctx.queryParam( "firstName" );
+      String lastName = ctx.queryParam( "lastName" );
+      String birthday = ctx.queryParam( "birthday" ); //yyyy-MM-dd
+
+      final Person newPerson = this.personService.createNewPerson( firstName, lastName, birthday );
+
+      ctx.json( newPerson );
+   }
+
+
+   public void findPerson( Context ctx )
+   {
+      String id = ctx.pathParam( "personId" );
+      System.out.println( id );
+      Person account = this.personService.findById( Long.valueOf( id ) );
+      if ( account != null )
       {
-         List<Person> accounts = this.personService.findAll();
-         ctx.json( accounts );
-      } );
-
-      javalin.get( "/person/{id}", ctx ->
+         ctx.json( account );
+      }
+      else
       {
-         String id = ctx.pathParam( "id" );
-         System.out.println( id );
-         Person account = this.personService.findById( Long.valueOf( id ) );
-         if ( account != null )
-         {
-            ctx.json( account );
-         }
-         else
-         {
-            ctx.status( 404 ).result( "Account not found" );
-         }
-      } );
+         ctx.status( 404 ).result( "Account not found" );
+      }
+   }
 
-      javalin.post( "/person", ctx ->
-      {
-         String firstName = ctx.queryParam( "firstName" );
-         String lastName = ctx.queryParam( "lastName" );
-         String birthday = ctx.queryParam( "birthday" ); //yyyy-MM-dd
 
-         final Person newPerson = this.personService.createNewPerson( firstName, lastName, birthday );
-
-         ctx.json( newPerson );
-      } );
+   public void findEveryPerson( Context ctx )
+   {
+      List<Person> accounts = this.personService.findAll();
+      ctx.json( accounts );
    }
 }

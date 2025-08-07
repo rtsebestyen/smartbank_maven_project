@@ -14,13 +14,13 @@ public class AccountRepository
 
    public void save( Account account )
    {
-      store.put( account.getId(), account );
+      this.store.put( account.getId(), account );
    }
 
 
-   public Account findById( String id )
+   public Account findById( Long accountId )
    {
-      return store.get( id );
+      return this.store.get( accountId );
    }
 
 

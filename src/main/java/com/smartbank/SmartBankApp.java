@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.smartbank.account.AccountModule;
+import com.smartbank.card.CardModule;
 import com.smartbank.commoninterface.ModuleInterface;
 import com.smartbank.person.PersonModule;
+import com.smartbank.person.PersonService;
 
 import io.javalin.Javalin;
 
@@ -15,12 +17,16 @@ public class SmartBankApp
 
    public SmartBankApp( )
    {
-      // create a graph for the modules and their dependencies, check cycle dependencies
       final PersonModule personModule = new PersonModule();
-      final AccountModule accountModule = new AccountModule( personModule.getService() );
+      final PersonService personService = personModule.getService();
+
+      final AccountModule accountModule = new AccountModule( personService );
+
+      final ModuleInterface cardModule = new CardModule( accountModule.getService(), personService );
 
       this.modules.add( personModule );
       this.modules.add( accountModule );
+      this.modules.add( cardModule );
    }
 
 
